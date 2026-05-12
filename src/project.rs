@@ -57,7 +57,9 @@ impl ProjectConfig {
     }
 
     pub fn generate_claude_skill(app_name: Option<&str>, app_id: Option<&str>) -> Result<(), CliError> {
-        let skill_dir = PathBuf::from(".claude").join("commands");
+        let skill_dir = PathBuf::from(".claude")
+            .join("skills")
+            .join("apple-cli");
         std::fs::create_dir_all(&skill_dir)?;
 
         let app_context = match (app_name, app_id) {
@@ -66,7 +68,12 @@ impl ProjectConfig {
             _ => String::new(),
         };
 
-        let skill_content = format!(r#"# Apple Developer CLI
+        let skill_content = format!(r#"---
+name: apple-cli
+description: Apple App Store Connect CLI — manage builds, TestFlight, certificates, devices, profiles, and users
+---
+
+# Apple Developer CLI
 
 {app_context}The project has a local `.apple/config.toml` that stores the App Store Connect profile and app ID. Commands like `builds list`, `beta-groups list`, and `versions list` automatically use the configured app ID.
 
@@ -110,7 +117,7 @@ The `.apple/config.toml` in this project directory sets:
 To reconfigure: `apple-cli init`
 "#);
 
-        std::fs::write(skill_dir.join("apple.md"), skill_content)?;
+        std::fs::write(skill_dir.join("SKILL.md"), skill_content)?;
         Ok(())
     }
 }

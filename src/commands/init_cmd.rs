@@ -91,7 +91,7 @@ pub async fn execute(
         "app_name": app_name,
         "bundle_id": bundle_id,
         "gitignore_updated": true,
-        "claude_skill_created": ".claude/commands/apple.md",
+        "claude_skill_created": ".claude/skills/apple-cli/SKILL.md",
     });
     println!("{}", serde_json::to_string_pretty(&output)?);
     Ok(())

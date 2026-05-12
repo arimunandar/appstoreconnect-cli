@@ -4,7 +4,7 @@ use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
 pub enum ConfigCommands {
-    /// Initialize configuration interactively
+    /// Initialize configuration
     Init {
         /// Issuer ID from App Store Connect
         #[arg(long)]
@@ -25,9 +25,11 @@ pub enum ConfigCommands {
         /// Value to set
         value: String,
     },
+    /// List all configured profiles
+    List,
 }
 
-pub fn execute(cmd: &ConfigCommands) -> Result<(), CliError> {
+pub fn execute(cmd: &ConfigCommands, profile: Option<&str>) -> Result<(), CliError> {
     match cmd {
         ConfigCommands::Init {
             issuer_id,
@@ -39,27 +41,30 @@ pub fn execute(cmd: &ConfigCommands) -> Result<(), CliError> {
                 key_id: Some(key_id.clone()),
                 key_path: Some(key_path.clone()),
             };
-            config.save()?;
+            let path = config.save(profile)?;
             let output = serde_json::json!({
                 "message": "Configuration saved",
-                "path": Config::config_path()?.to_string_lossy(),
+                "profile": profile.unwrap_or("default"),
+                "path": path.to_string_lossy(),
             });
             println!("{}", serde_json::to_string_pretty(&output)?);
             Ok(())
         }
         ConfigCommands::Show => {
-            let config = Config::load()?;
+            let config = Config::load(profile)?;
+            let path = Config::config_path_for(profile)?;
             let output = serde_json::json!({
+                "profile": profile.unwrap_or("default"),
                 "issuer_id": config.issuer_id,
                 "key_id": config.key_id,
                 "key_path": config.key_path,
-                "config_path": Config::config_path()?.to_string_lossy(),
+                "config_path": path.to_string_lossy(),
             });
             println!("{}", serde_json::to_string_pretty(&output)?);
             Ok(())
         }
         ConfigCommands::Set { key, value } => {
-            let mut config = Config::load()?;
+            let mut config = Config::load(profile)?;
             match key.as_str() {
                 "issuer-id" => config.issuer_id = Some(value.clone()),
                 "key-id" => config.key_id = Some(value.clone()),
@@ -70,10 +75,17 @@ pub fn execute(cmd: &ConfigCommands) -> Result<(), CliError> {
                     )));
                 }
             }
-            config.save()?;
+            config.save(profile)?;
             let output = serde_json::json!({
                 "message": format!("Set {key} = {value}"),
+                "profile": profile.unwrap_or("default"),
             });
+            println!("{}", serde_json::to_string_pretty(&output)?);
+            Ok(())
+        }
+        ConfigCommands::List => {
+            let profiles = Config::list_profiles()?;
+            let output = serde_json::json!({ "profiles": profiles });
             println!("{}", serde_json::to_string_pretty(&output)?);
             Ok(())
         }

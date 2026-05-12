@@ -17,13 +17,25 @@ impl Config {
         Ok(dir)
     }
 
-    pub fn config_path() -> Result<PathBuf, CliError> {
-        Ok(Self::config_dir()?.join("config.toml"))
+    pub fn profiles_dir() -> Result<PathBuf, CliError> {
+        Ok(Self::config_dir()?.join("profiles"))
     }
 
-    pub fn load() -> Result<Self, CliError> {
-        let path = Self::config_path()?;
+    pub fn config_path_for(profile: Option<&str>) -> Result<PathBuf, CliError> {
+        match profile {
+            Some(name) => Ok(Self::profiles_dir()?.join(format!("{name}.toml"))),
+            None => Ok(Self::config_dir()?.join("config.toml")),
+        }
+    }
+
+    pub fn load(profile: Option<&str>) -> Result<Self, CliError> {
+        let path = Self::config_path_for(profile)?;
         if !path.exists() {
+            if let Some(name) = profile {
+                return Err(CliError::Config(format!(
+                    "profile '{name}' not found (create it with `apple-cli config init --profile {name} ...`)"
+                )));
+            }
             return Ok(Self::default());
         }
         let content = std::fs::read_to_string(&path)?;
@@ -31,13 +43,36 @@ impl Config {
             .map_err(|e| CliError::Config(format!("invalid config file: {e}")))
     }
 
-    pub fn save(&self) -> Result<(), CliError> {
-        let dir = Self::config_dir()?;
-        std::fs::create_dir_all(&dir)?;
+    pub fn save(&self, profile: Option<&str>) -> Result<PathBuf, CliError> {
+        let path = Self::config_path_for(profile)?;
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
         let content = toml::to_string_pretty(self)
             .map_err(|e| CliError::Config(format!("cannot serialize config: {e}")))?;
-        std::fs::write(Self::config_path()?, content)?;
-        Ok(())
+        std::fs::write(&path, content)?;
+        Ok(path)
+    }
+
+    pub fn list_profiles() -> Result<Vec<String>, CliError> {
+        let mut profiles = Vec::new();
+        let default_path = Self::config_dir()?.join("config.toml");
+        if default_path.exists() {
+            profiles.push("default".to_string());
+        }
+        let profiles_dir = Self::profiles_dir()?;
+        if profiles_dir.exists() {
+            let mut entries: Vec<_> = std::fs::read_dir(&profiles_dir)?
+                .filter_map(|entry| {
+                    let entry = entry.ok()?;
+                    let name = entry.file_name().to_string_lossy().to_string();
+                    name.strip_suffix(".toml").map(String::from)
+                })
+                .collect();
+            entries.sort();
+            profiles.extend(entries);
+        }
+        Ok(profiles)
     }
 
     pub fn resolve(

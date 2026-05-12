@@ -16,6 +16,10 @@ pub struct Cli {
     #[arg(long, global = true, env = "APPLE_CLI_KEY_PATH")]
     pub key_path: Option<String>,
 
+    /// Named profile to use (loads ~/.apple-cli/profiles/<name>.toml)
+    #[arg(long, global = true, env = "APPLE_CLI_PROFILE")]
+    pub profile: Option<String>,
+
     #[command(subcommand)]
     pub command: Commands,
 }

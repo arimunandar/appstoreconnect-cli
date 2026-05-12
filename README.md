@@ -51,13 +51,75 @@ This saves credentials to `~/.apple-cli/config.toml`.
 apple-cli apps list
 ```
 
+## Multiple Accounts (Profiles)
+
+Use `--profile` to manage multiple Apple Developer accounts without reconfiguring each time.
+
+### Setup profiles
+
+```sh
+# Personal account
+apple-cli --profile personal config init \
+  --issuer-id YOUR_PERSONAL_ISSUER_ID \
+  --key-id YOUR_PERSONAL_KEY_ID \
+  --key-path /path/to/personal/AuthKey.p8
+
+# Company account
+apple-cli --profile company config init \
+  --issuer-id YOUR_COMPANY_ISSUER_ID \
+  --key-id YOUR_COMPANY_KEY_ID \
+  --key-path /path/to/company/AuthKey.p8
+```
+
+### Use profiles
+
+```sh
+# Use personal account
+apple-cli --profile personal apps list
+
+# Use company account
+apple-cli --profile company apps list
+apple-cli --profile company builds list --filter-app APP_ID
+
+# No --profile flag uses the default config
+apple-cli apps list
+```
+
+### Manage profiles
+
+```sh
+# List all configured profiles
+apple-cli config list
+
+# Show a profile's config
+apple-cli --profile company config show
+
+# Update a profile value
+apple-cli --profile company config set key-path /new/path/to/key.p8
+```
+
+### How it works
+
+| Profile | Config file path |
+|---------|-----------------|
+| default (no `--profile`) | `~/.apple-cli/config.toml` |
+| `--profile personal` | `~/.apple-cli/profiles/personal.toml` |
+| `--profile company` | `~/.apple-cli/profiles/company.toml` |
+
+You can also set a profile via the `APPLE_CLI_PROFILE` environment variable:
+
+```sh
+export APPLE_CLI_PROFILE=company
+apple-cli apps list   # uses company profile
+```
+
 ## Authentication
 
 Credentials are resolved in this order (first wins):
 
 1. **CLI flags**: `--issuer-id`, `--key-id`, `--key-path`
 2. **Environment variables**: `APPLE_CLI_ISSUER_ID`, `APPLE_CLI_KEY_ID`, `APPLE_CLI_KEY_PATH`
-3. **Config file**: `~/.apple-cli/config.toml`
+3. **Config file**: `~/.apple-cli/config.toml` (or `~/.apple-cli/profiles/<name>.toml` when using `--profile`)
 
 A fresh JWT (ES256) is generated per invocation. No tokens are cached.
 
@@ -102,19 +164,29 @@ apple-cli builds list --all
 ### config -- Manage CLI Configuration
 
 ```sh
-# Save credentials
+# Save credentials (default profile)
 apple-cli config init \
+  --issuer-id UUID \
+  --key-id KEY_ID \
+  --key-path /path/to/key.p8
+
+# Save credentials to a named profile
+apple-cli --profile myteam config init \
   --issuer-id UUID \
   --key-id KEY_ID \
   --key-path /path/to/key.p8
 
 # Show current config
 apple-cli config show
+apple-cli --profile myteam config show
 
 # Update a single value
 apple-cli config set issuer-id NEW_UUID
 apple-cli config set key-id NEW_KEY_ID
 apple-cli config set key-path /new/path/to/key.p8
+
+# List all profiles
+apple-cli config list
 ```
 
 ---
@@ -513,6 +585,7 @@ apple-cli users remove USER_ID
 | `APPLE_CLI_ISSUER_ID` | Issuer ID for JWT authentication |
 | `APPLE_CLI_KEY_ID` | API Key ID |
 | `APPLE_CLI_KEY_PATH` | Path to the .p8 private key file |
+| `APPLE_CLI_PROFILE` | Named profile to use (e.g., `company`) |
 
 Use environment variables for CI/CD pipelines or to avoid passing flags on every call:
 

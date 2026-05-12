@@ -23,11 +23,13 @@ async fn main() {
 }
 
 async fn run(cli: Cli) -> Result<(), CliError> {
+    let profile = cli.profile.as_deref();
+
     if let Commands::Config { ref command } = cli.command {
-        return commands::config_cmd::execute(command);
+        return commands::config_cmd::execute(command, profile);
     }
 
-    let config = Config::load()?;
+    let config = Config::load(profile)?;
     let resolved = config.resolve(
         cli.issuer_id.as_deref(),
         cli.key_id.as_deref(),

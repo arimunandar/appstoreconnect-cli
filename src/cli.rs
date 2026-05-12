@@ -26,6 +26,12 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
+    /// Initialize project directory (.apple/config.toml + Claude Code skill)
+    Init {
+        /// App ID to link this project to (auto-detected if only one app)
+        #[arg(long)]
+        app_id: Option<String>,
+    },
     /// Manage CLI configuration
     Config {
         #[command(subcommand)]

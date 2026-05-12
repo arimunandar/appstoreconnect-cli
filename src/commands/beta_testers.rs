@@ -33,7 +33,11 @@ pub enum BetaTestersCommands {
     Remove { id: String },
 }
 
-pub async fn execute(cmd: &BetaTestersCommands, client: &ApiClient) -> Result<(), CliError> {
+pub async fn execute(
+    cmd: &BetaTestersCommands,
+    client: &ApiClient,
+    project_app_id: Option<&str>,
+) -> Result<(), CliError> {
     match cmd {
         BetaTestersCommands::List {
             filter_email,
@@ -41,11 +45,12 @@ pub async fn execute(cmd: &BetaTestersCommands, client: &ApiClient) -> Result<()
             limit,
             all,
         } => {
+            let app_id = filter_app.as_deref().or(project_app_id);
             let mut params = vec![format!("limit={limit}")];
             if let Some(v) = filter_email {
                 params.push(format!("filter[email]={v}"));
             }
-            if let Some(v) = filter_app {
+            if let Some(v) = app_id {
                 params.push(format!("filter[apps]={v}"));
             }
             let path = format!("/betaTesters?{}", params.join("&"));

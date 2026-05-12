@@ -22,7 +22,11 @@ pub enum BuildsCommands {
     Get { id: String },
 }
 
-pub async fn execute(cmd: &BuildsCommands, client: &ApiClient) -> Result<(), CliError> {
+pub async fn execute(
+    cmd: &BuildsCommands,
+    client: &ApiClient,
+    project_app_id: Option<&str>,
+) -> Result<(), CliError> {
     match cmd {
         BuildsCommands::List {
             filter_app,
@@ -31,8 +35,9 @@ pub async fn execute(cmd: &BuildsCommands, client: &ApiClient) -> Result<(), Cli
             limit,
             all,
         } => {
+            let app_id = filter_app.as_deref().or(project_app_id);
             let mut params = vec![format!("limit={limit}")];
-            if let Some(v) = filter_app {
+            if let Some(v) = app_id {
                 params.push(format!("filter[app]={v}"));
             }
             if let Some(v) = filter_version {

@@ -6,6 +6,7 @@ pub mod bundle_ids;
 pub mod certificates;
 pub mod config_cmd;
 pub mod devices;
+pub mod init_cmd;
 pub mod profiles;
 pub mod users;
 pub mod versions;

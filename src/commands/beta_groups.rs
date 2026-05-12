@@ -21,7 +21,7 @@ pub enum BetaGroupsCommands {
     /// Create a beta group
     Create {
         #[arg(long)]
-        app_id: String,
+        app_id: Option<String>,
         #[arg(long)]
         name: String,
     },
@@ -51,7 +51,11 @@ pub enum BetaGroupsCommands {
     },
 }
 
-pub async fn execute(cmd: &BetaGroupsCommands, client: &ApiClient) -> Result<(), CliError> {
+pub async fn execute(
+    cmd: &BetaGroupsCommands,
+    client: &ApiClient,
+    project_app_id: Option<&str>,
+) -> Result<(), CliError> {
     match cmd {
         BetaGroupsCommands::List {
             filter_app,
@@ -59,8 +63,9 @@ pub async fn execute(cmd: &BetaGroupsCommands, client: &ApiClient) -> Result<(),
             limit,
             all,
         } => {
+            let app_id = filter_app.as_deref().or(project_app_id);
             let mut params = vec![format!("limit={limit}")];
-            if let Some(v) = filter_app {
+            if let Some(v) = app_id {
                 params.push(format!("filter[app]={v}"));
             }
             if let Some(v) = filter_name {
@@ -84,6 +89,16 @@ pub async fn execute(cmd: &BetaGroupsCommands, client: &ApiClient) -> Result<(),
             Ok(())
         }
         BetaGroupsCommands::Create { app_id, name } => {
+            let resolved_app_id = app_id
+                .as_deref()
+                .or(project_app_id)
+                .ok_or_else(|| {
+                    CliError::Config(
+                        "app-id required (use --app-id or run `apple-cli init` in your project)"
+                            .into(),
+                    )
+                })?;
+
             let body = serde_json::json!({
                 "data": {
                     "type": "betaGroups",
@@ -93,7 +108,7 @@ pub async fn execute(cmd: &BetaGroupsCommands, client: &ApiClient) -> Result<(),
                     "relationships": {
                         "app": {
                             "data": {
-                                "id": app_id,
+                                "id": resolved_app_id,
                                 "type": "apps"
                             }
                         }

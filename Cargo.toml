@@ -1,0 +1,19 @@
+[package]
+name = "apple-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "env"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+jsonwebtoken = "9"
+toml = "0.8"
+dirs = "6"
+thiserror = "2"
+anyhow = "1"
+chrono = "0.4"
+url = "2"
+base64 = "0.22"

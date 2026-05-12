@@ -32,15 +32,17 @@ pub async fn execute(
             limit,
             all,
         } => {
-            let app_id = filter_app.as_deref().or(project_app_id);
+            let app_id = filter_app.as_deref().or(project_app_id).ok_or_else(|| {
+                CliError::Config(
+                    "app ID required for versions list (use --filter-app or run `apple-cli init` in your project)".into(),
+                )
+            })?;
+
             let mut params = vec![format!("limit={limit}")];
-            if let Some(v) = app_id {
-                params.push(format!("filter[app]={v}"));
-            }
             if let Some(v) = filter_platform {
                 params.push(format!("filter[platform]={v}"));
             }
-            let path = format!("/appStoreVersions?{}", params.join("&"));
+            let path = format!("/apps/{app_id}/appStoreVersions?{}", params.join("&"));
 
             let doc = if *all {
                 client.get_all::<AppStoreVersionAttributes>(&path).await?

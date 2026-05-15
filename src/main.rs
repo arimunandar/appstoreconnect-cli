@@ -80,6 +80,9 @@ async fn run(cli: Cli) -> Result<(), CliError> {
         Commands::Versions { ref command } => {
             commands::versions::execute(command, &client, project_app_id).await
         }
+        Commands::VersionLocalizations { ref command } => {
+            commands::version_localizations::execute(command, &client).await
+        }
         Commands::Users { ref command } => commands::users::execute(command, &client).await,
         Commands::CustomerReviews { ref command } => {
             commands::customer_reviews::execute(command, &client, project_app_id).await
@@ -113,6 +116,24 @@ async fn run(cli: Cli) -> Result<(), CliError> {
         }
         Commands::BetaAppReviewSubmissions { ref command } => {
             commands::beta_app_review_submissions::execute(command, &client).await
+        }
+        Commands::EncryptionDeclarations { ref command } => {
+            commands::encryption_declarations::execute(command, &client, project_app_id).await
+        }
+        Commands::ReleaseRequests { ref command } => {
+            commands::release_requests::execute(command, &client).await
+        }
+        Commands::Territories { ref command } => {
+            commands::territories::execute(command, &client).await
+        }
+        Commands::ReviewDetails { ref command } => {
+            commands::review_details::execute(command, &client).await
+        }
+        Commands::AgeRatingDeclarations { ref command } => {
+            commands::age_rating_declarations::execute(command, &client).await
+        }
+        Commands::AppInfoLocalizations { ref command } => {
+            commands::app_info_localizations::execute(command, &client).await
         }
     }
 }

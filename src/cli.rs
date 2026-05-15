@@ -80,10 +80,16 @@ pub enum Commands {
         #[command(subcommand)]
         command: profiles::ProfilesCommands,
     },
-    /// List and inspect App Store versions
+    /// Manage App Store versions
     Versions {
         #[command(subcommand)]
         command: versions::VersionsCommands,
+    },
+    /// Manage App Store version localizations
+    #[command(name = "version-localizations")]
+    VersionLocalizations {
+        #[command(subcommand)]
+        command: version_localizations::VersionLocalizationsCommands,
     },
     /// Manage users
     Users {
@@ -154,5 +160,40 @@ pub enum Commands {
     BetaAppReviewSubmissions {
         #[command(subcommand)]
         command: beta_app_review_submissions::BetaAppReviewSubmissionsCommands,
+    },
+    /// Manage app encryption declarations
+    #[command(name = "encryption-declarations")]
+    EncryptionDeclarations {
+        #[command(subcommand)]
+        command: encryption_declarations::EncryptionDeclarationsCommands,
+    },
+    /// Manage App Store version release requests
+    #[command(name = "release-requests")]
+    ReleaseRequests {
+        #[command(subcommand)]
+        command: release_requests::ReleaseRequestsCommands,
+    },
+    /// List territories
+    Territories {
+        #[command(subcommand)]
+        command: territories::TerritoriesCommands,
+    },
+    /// Manage App Store review details
+    #[command(name = "review-details")]
+    ReviewDetails {
+        #[command(subcommand)]
+        command: review_details::ReviewDetailsCommands,
+    },
+    /// Manage age rating declarations
+    #[command(name = "age-rating-declarations")]
+    AgeRatingDeclarations {
+        #[command(subcommand)]
+        command: age_rating_declarations::AgeRatingDeclarationsCommands,
+    },
+    /// Manage app info localizations
+    #[command(name = "app-info-localizations")]
+    AppInfoLocalizations {
+        #[command(subcommand)]
+        command: app_info_localizations::AppInfoLocalizationsCommands,
     },
 }

@@ -81,5 +81,38 @@ async fn run(cli: Cli) -> Result<(), CliError> {
             commands::versions::execute(command, &client, project_app_id).await
         }
         Commands::Users { ref command } => commands::users::execute(command, &client).await,
+        Commands::CustomerReviews { ref command } => {
+            commands::customer_reviews::execute(command, &client, project_app_id).await
+        }
+        Commands::InAppPurchases { ref command } => {
+            commands::in_app_purchases::execute(command, &client, project_app_id).await
+        }
+        Commands::SubscriptionGroups { ref command } => {
+            commands::subscription_groups::execute(command, &client, project_app_id).await
+        }
+        Commands::Subscriptions { ref command } => {
+            commands::subscriptions::execute(command, &client, project_app_id).await
+        }
+        Commands::SubscriptionLocalizations { ref command } => {
+            commands::subscription_localizations::execute(command, &client).await
+        }
+        Commands::ReviewSubmissions { ref command } => {
+            commands::review_submissions::execute(command, &client, project_app_id).await
+        }
+        Commands::PhasedReleases { ref command } => {
+            commands::phased_releases::execute(command, &client).await
+        }
+        Commands::UserInvitations { ref command } => {
+            commands::user_invitations::execute(command, &client).await
+        }
+        Commands::SandboxTesters { ref command } => {
+            commands::sandbox_testers::execute(command, &client).await
+        }
+        Commands::BundleIdCapabilities { ref command } => {
+            commands::bundle_id_capabilities::execute(command, &client).await
+        }
+        Commands::BetaAppReviewSubmissions { ref command } => {
+            commands::beta_app_review_submissions::execute(command, &client).await
+        }
     }
 }

@@ -90,4 +90,69 @@ pub enum Commands {
         #[command(subcommand)]
         command: users::UsersCommands,
     },
+    /// Manage customer reviews
+    #[command(name = "customer-reviews")]
+    CustomerReviews {
+        #[command(subcommand)]
+        command: customer_reviews::CustomerReviewsCommands,
+    },
+    /// Manage in-app purchases
+    #[command(name = "in-app-purchases")]
+    InAppPurchases {
+        #[command(subcommand)]
+        command: in_app_purchases::InAppPurchasesCommands,
+    },
+    /// Manage subscription groups
+    #[command(name = "subscription-groups")]
+    SubscriptionGroups {
+        #[command(subcommand)]
+        command: subscription_groups::SubscriptionGroupsCommands,
+    },
+    /// Manage subscriptions
+    Subscriptions {
+        #[command(subcommand)]
+        command: subscriptions::SubscriptionsCommands,
+    },
+    /// Manage subscription localizations
+    #[command(name = "subscription-localizations")]
+    SubscriptionLocalizations {
+        #[command(subcommand)]
+        command: subscription_localizations::SubscriptionLocalizationsCommands,
+    },
+    /// Manage review submissions to App Store Review
+    #[command(name = "review-submissions")]
+    ReviewSubmissions {
+        #[command(subcommand)]
+        command: review_submissions::ReviewSubmissionsCommands,
+    },
+    /// Manage phased releases for App Store versions
+    #[command(name = "phased-releases")]
+    PhasedReleases {
+        #[command(subcommand)]
+        command: phased_releases::PhasedReleasesCommands,
+    },
+    /// Manage user invitations
+    #[command(name = "user-invitations")]
+    UserInvitations {
+        #[command(subcommand)]
+        command: user_invitations::UserInvitationsCommands,
+    },
+    /// Manage sandbox testers (v2 endpoints)
+    #[command(name = "sandbox-testers")]
+    SandboxTesters {
+        #[command(subcommand)]
+        command: sandbox_testers::SandboxTestersCommands,
+    },
+    /// Manage bundle ID capabilities
+    #[command(name = "bundle-id-capabilities")]
+    BundleIdCapabilities {
+        #[command(subcommand)]
+        command: bundle_id_capabilities::BundleIdCapabilitiesCommands,
+    },
+    /// Manage beta app review submissions
+    #[command(name = "beta-app-review-submissions")]
+    BetaAppReviewSubmissions {
+        #[command(subcommand)]
+        command: beta_app_review_submissions::BetaAppReviewSubmissionsCommands,
+    },
 }

@@ -129,11 +129,20 @@ async fn run(cli: Cli) -> Result<(), CliError> {
         Commands::ReviewDetails { ref command } => {
             commands::review_details::execute(command, &client).await
         }
+        Commands::Analytics { ref command } => {
+            commands::analytics_reports::execute(command, &client, project_app_id).await
+        }
         Commands::AgeRatingDeclarations { ref command } => {
             commands::age_rating_declarations::execute(command, &client).await
         }
         Commands::AppInfoLocalizations { ref command } => {
             commands::app_info_localizations::execute(command, &client).await
+        }
+        Commands::SalesReports { ref command } => {
+            commands::sales_reports::execute(command, &client).await
+        }
+        Commands::PerfMetrics { ref command } => {
+            commands::perf_metrics::execute(command, &client, project_app_id).await
         }
     }
 }

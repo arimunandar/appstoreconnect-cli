@@ -184,6 +184,24 @@ impl ApiClient {
         }
     }
 
+    pub async fn get_raw(&self, path: &str) -> Result<Vec<u8>, CliError> {
+        let url = format!("{BASE_URL}{path}");
+        let token = self.token()?;
+        let resp = self
+            .http
+            .get(&url)
+            .header(AUTHORIZATION, format!("Bearer {token}"))
+            .send()
+            .await?;
+        if resp.status().is_success() {
+            Ok(resp.bytes().await?.to_vec())
+        } else {
+            let status = resp.status().as_u16();
+            let body = resp.text().await.unwrap_or_default();
+            Err(Self::parse_error(status, &body))
+        }
+    }
+
     async fn handle_response<T: DeserializeOwned>(
         resp: reqwest::Response,
     ) -> Result<T, CliError> {

@@ -184,6 +184,12 @@ pub enum Commands {
         #[command(subcommand)]
         command: review_details::ReviewDetailsCommands,
     },
+    /// Manage analytics reports
+    #[command(name = "analytics")]
+    Analytics {
+        #[command(subcommand)]
+        command: analytics_reports::AnalyticsReportsCommands,
+    },
     /// Manage age rating declarations
     #[command(name = "age-rating-declarations")]
     AgeRatingDeclarations {
@@ -195,5 +201,17 @@ pub enum Commands {
     AppInfoLocalizations {
         #[command(subcommand)]
         command: app_info_localizations::AppInfoLocalizationsCommands,
+    },
+    /// Download sales and finance reports
+    #[command(name = "sales-reports")]
+    SalesReports {
+        #[command(subcommand)]
+        command: sales_reports::SalesReportsCommands,
+    },
+    /// Performance and power metrics, diagnostics
+    #[command(name = "perf-metrics")]
+    PerfMetrics {
+        #[command(subcommand)]
+        command: perf_metrics::PerfMetricsCommands,
     },
 }
